@@ -65,6 +65,18 @@ button{font:inherit;color:inherit;cursor:pointer}
 .pz .pill.half{background:rgba(255,255,255,.92);color:var(--d);border:0}
 .pill{font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;background:var(--c);color:var(--on);white-space:nowrap}
 @media (max-width:440px){.kaarten{grid-template-columns:1fr}.pz{min-height:150px;padding-right:100px}.pz .icoon{width:84px;height:84px}.pz:first-child{padding-right:16px}.pz:first-child .meta{min-height:96px;align-items:flex-end}.pz:first-child .icoon{width:110px;height:110px;right:12px}}
+.terugbalk{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:-12px 0 18px;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,#E6A22E 16%,var(--paper));box-shadow:inset 0 0 0 2px #E6A22E;font-size:14.5px;line-height:1.35}
+.terugbalk a{font-weight:700;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center;padding:0 12px;border-radius:9px;background:var(--ink);color:var(--bg);text-decoration:none}
+.dagen{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 18px}
+.dagen a{display:grid;justify-items:center;gap:1px;min-height:64px;padding:8px 2px 6px;border-radius:12px;border:2px solid var(--line);background:var(--paper);text-decoration:none;text-align:center;-webkit-tap-highlight-color:transparent}
+.dagen a:active{transform:scale(.97)}
+.dagen b{font-family:var(--display);font-weight:700;font-size:14px;line-height:1.1;text-transform:capitalize}
+.dagen span{font-size:12.5px;color:var(--muted);line-height:1.2}
+.dagen i{font-style:normal;font-size:11px;font-weight:700;color:var(--good);line-height:1.3}
+.dagen a[aria-current]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.dagen a[aria-current] span{color:inherit;opacity:.75}
+.dagen a[aria-current] i{color:inherit}
+@media (max-width:370px){.dagen{gap:4px}.dagen b{font-size:13px}}
 footer{margin-top:28px;color:var(--muted);font-size:13px;text-align:center}
 /* spelpagina */
 .back{display:inline-flex;gap:6px;font-size:14px;font-weight:600;text-decoration:none;color:var(--muted);margin-bottom:12px}
@@ -304,9 +316,17 @@ const app = $("#app");
 const TESTMODUS = false;
 const TEST_DAG = (() => { if (!TESTMODUS) return 0; try { return parseInt(localStorage.getItem(`${SITE}:testdag`)) || 0; } catch { return 0; } })();
 const NU = new Date(Date.now() + TEST_DAG * 864e5);
-const ymd = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Amsterdam" }).format(NU);
+/* Eerdere dagen: ?dag=JJJJ-MM-DD speelt een dag tot TERUG_MAX dagen terug. Toekomstige of oudere datums vallen terug op vandaag. */
+const TERUG_MAX = 4;
+const VANDAAG = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Amsterdam" }).format(NU);
+const dagMin = n => new Date(Date.parse(VANDAAG) - n * 864e5).toISOString().slice(0, 10);
+const DAGEN = Array.from({ length: TERUG_MAX + 1 }, (_, n) => dagMin(n));
+const ymd = (() => { try { const d = new URLSearchParams(location.search).get("dag"); return DAGEN.includes(d) ? d : VANDAAG; } catch { return VANDAAG; } })();
+const VERLEDEN = ymd !== VANDAAG;
 const dayNo = Math.round((Date.parse(ymd) - Date.parse("2026-01-01")) / 864e5);
-const today = new Intl.DateTimeFormat("nl-NL", { timeZone: "Europe/Amsterdam", weekday: "long", day: "numeric", month: "long" }).format(NU);
+const dagNaam = (d, o) => new Intl.DateTimeFormat("nl-NL", { timeZone: "UTC", ...o }).format(new Date(d + "T12:00:00Z"));
+const today = dagNaam(ymd, { weekday: "long", day: "numeric", month: "long" });
+const dagUrl = d => d === VANDAAG ? location.pathname : `${location.pathname}?dag=${d}`;
 const kies = arr => arr[((dayNo % arr.length) + arr.length) % arr.length];
 function rng(s) { return () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function schud(a, R) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
@@ -324,7 +344,12 @@ const focusZacht = (el, mag) => { if (el && (!TIK || mag)) el.focus({ preventScr
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 let opruimen = [];
 function ruimOp() { opruimen.forEach(f => f()); opruimen = []; document.onkeydown = null; }
-function topbar() { return `<div class="top"><a class="brand" href="#">${DIER.vos}<b>${SITE}</b></a><span class="date">${today}</span></div>`; }
+function topbar() { return `<div class="top"><a class="brand" href="#">${DIER.vos}<b>${SITE}</b></a><span class="date">${today}</span></div>` + (VERLEDEN ? `<div class="terugbalk"><span>Je speelt een <b>eerdere dag</b>.</span><a href="${dagUrl(VANDAAG)}">Naar vandaag</a></div>` : ""); }
+function dagkiezer(ids) {
+  const klaar = d => ids.filter(id => { try { return JSON.parse(localStorage.getItem(`${SITE}:v8:${d}:${id}`))?.done; } catch { return false; } }).length;
+  return `<nav class="dagen" aria-label="Kies een dag">${DAGEN.map((d, n) => { const k = klaar(d);
+    return `<a href="${dagUrl(d)}"${d === ymd ? ` aria-current="page"` : ""}><b>${n === 0 ? "Vandaag" : n === 1 ? "Gisteren" : dagNaam(d, { weekday: "short" }).replace(".", "")}</b><span>${n < 2 ? dagNaam(d, { day: "numeric", month: "short" }).replace(".", "") : dagNaam(d, { day: "numeric" })}</span><i>${k === ids.length ? "✓ klaar" : k ? `${k} van ${ids.length}` : "&nbsp;"}</i></a>`; }).join("")}</nav>`;
+}
 const huidig = () => PUZZELS.find(x => x[0] === location.hash.slice(1)) || PUZZELS[0];
 const GAST = {
   ketting: { naam: "Rinus", soort: "de rups", intro: "Ik ben Rinus. Ik rijg al mijn hele leven dingen aan elkaar. Vandaag: tien dieren.", goed: ["Weer een schakel erbij!", "Mooi aangeregen.", "Mijn ketting groeit!", "Die past perfect."], fout: ["Die past niet aan mijn ketting.", "Hmm, dat schakeltje klopt niet.", "Bijna, maar niet helemaal."], klaar: ["Wat een ketting! Die draag ik vandaag met trots.", "Een stevige ketting. Morgen rijgen we verder.", "Een paar schakels kwijt. Morgen nieuwe kansen.", "Perfect! Een ketting zonder één zwakke schakel. Ik ben er stil van."] },
@@ -349,9 +374,9 @@ function shell(titel, uitleg) {
 function uitslag(P, kop, score, extra) {
   const pz = huidig(), dier = DIER[pz[5]], g = GAST[pz[0]];
   zeg(score >= 100 && g.klaar[3] ? g.klaar[3] : score >= 75 ? g.klaar[0] : score >= 45 ? g.klaar[1] : g.klaar[2]);
-  P.innerHTML = `<div class="uitslag"><span class="icoon">${dier}</span><span class="small">Klaar voor vandaag</span><h2>${kop}</h2><div class="score"><span class="big">${score}</span><span class="small">/ 100</span></div></div>
+  P.innerHTML = `<div class="uitslag"><span class="icoon">${dier}</span><span class="small">${VERLEDEN ? "Klaar voor deze dag" : "Klaar voor vandaag"}</span><h2>${kop}</h2><div class="score"><span class="big">${score}</span><span class="small">/ 100</span></div></div>
     ${extra || ""}
-    <p class="small" style="margin:0">Morgen staat hier een nieuwe puzzel. <a href="#">Terug naar alle puzzels</a></p>`;
+    <p class="small" style="margin:0">${VERLEDEN ? "Je kunt tot vier dagen terug spelen." : "Morgen staat hier een nieuwe puzzel."} <a href="#">Terug naar alle puzzels</a></p>`;
 }
 </script>
 <script>
@@ -720,10 +745,11 @@ function home() {
   const af = PUZZELS.filter(p => store.get(p[0])?.done).length;
   app.innerHTML = topbar() + `<section class="hero">
     <h1>Vijf puzzels, <em>elke dag nieuw</em></h1>
-    <p>${af === PUZZELS.length ? "Alles gespeeld. Morgen staan hier vijf nieuwe puzzels." : "Raadsels, dieren, kaarten en tijd."}</p>
+    <p>${af === PUZZELS.length ? (VERLEDEN ? "Alles van deze dag gespeeld. Kies hieronder een andere dag." : "Alles gespeeld. Morgen staan hier vijf nieuwe puzzels. Of speel hieronder een eerdere dag.") : "Raadsels, dieren, kaarten en tijd."}</p>
     <div class="voortgang"><div class="balk"><i style="width:${af / PUZZELS.length * 100}%"></i></div><span class="small">${af} van ${PUZZELS.length} gespeeld</span></div></section>
-    <nav class="kaarten">${PUZZELS.map(([id, t, d, duur, , dier, kleur]) => (id === "wie" && (d = `Vandaag: ${kiesVanaf(WIE).map(r => r.soort.toLowerCase()).join(", ").replace(/, ([^,]*)$/, " en $1")}. Je krijgt steeds een tip erbij. Hoe eerder je het weet, hoe meer punten.`.replace("; je", ". Je")), 0) || `<a class="pz" href="#${id}" style="--c:${kleur}"><span class="icoon">${DIER[dier]}</span><span>${id === "wie" ? `<span class="tag">Aanrader</span>` : ""}<span class="gastnaam">Met ${GAST[id].naam} ${GAST[id].soort}</span><h2>${t}</h2><p>${d}</p></span><span class="meta">${stand(id)}<span class="small">${duur}</span></span></a>`).join("")}</nav>
-    <footer>Je voortgang blijft alleen in deze browser bewaard. Om middernacht staan er nieuwe puzzels klaar.</footer>`;
+    ${dagkiezer(PUZZELS.map(p => p[0]))}
+    <nav class="kaarten">${PUZZELS.map(([id, t, d, duur, , dier, kleur]) => (id === "wie" && (d = `${VERLEDEN ? "Deze dag" : "Vandaag"}: ${kiesVanaf(WIE).map(r => r.soort.toLowerCase()).join(", ").replace(/, ([^,]*)$/, " en $1")}. Je krijgt steeds een tip erbij. Hoe eerder je het weet, hoe meer punten.`.replace("; je", ". Je")), 0) || `<a class="pz" href="#${id}" style="--c:${kleur}"><span class="icoon">${DIER[dier]}</span><span>${id === "wie" ? `<span class="tag">Aanrader</span>` : ""}<span class="gastnaam">Met ${GAST[id].naam} ${GAST[id].soort}</span><h2>${t}</h2><p>${d}</p></span><span class="meta">${stand(id)}<span class="small">${duur}</span></span></a>`).join("")}</nav>
+    <footer>Je voortgang blijft alleen in deze browser bewaard. Om middernacht staan er nieuwe puzzels klaar. Je kunt tot vier dagen terug spelen.</footer>`;
 }
 function route() {
   ruimOp();
