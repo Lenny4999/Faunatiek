@@ -1,6 +1,12 @@
+<!doctype html>
+<html lang="nl">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Faunatiek</title>
 <meta name="description" content="Elke dag vijf nieuwe puzzels over dieren, taal en tijd.">
-<meta name="theme-color" content="#F4F0E8">
+<meta name="theme-color" content="#F4F0E8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1916" media="(prefers-color-scheme: dark)">
+<meta name="format-detection" content="telephone=no">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap">
 <style>
@@ -39,12 +45,12 @@ button{font:inherit;color:inherit;cursor:pointer}
 .voortgang .balk i{display:block;height:100%;border-radius:99px;background:var(--ink)}
 .kaarten{display:grid;gap:12px;grid-template-columns:1fr 1fr}
 .pz{--d:color-mix(in srgb,var(--c) 62%,#000);position:relative;overflow:hidden;display:grid;align-content:space-between;gap:12px;min-height:200px;padding:16px;border-radius:16px;background:var(--c);color:#fff;text-decoration:none;transition:transform .15s}
-.pz:hover{transform:translateY(-3px)}
+@media (hover:hover){.pz:hover{transform:translateY(-3px)}}
 .pz:active{transform:scale(.98)}
 .pz:first-child{grid-column:1/-1;min-height:180px}
 .pz{--i:var(--d)}
 .pz .icoon{position:absolute;right:8px;bottom:-6px;width:96px;height:96px;transition:transform .2s}
-.pz:hover .icoon{transform:rotate(-6deg) translateY(-3px)}
+@media (hover:hover){.pz:hover .icoon{transform:rotate(-6deg) translateY(-3px)}}
 .pz .icoon svg{width:100%;height:100%}
 .pz:first-child .icoon{width:150px;height:150px;right:18px;bottom:-4px}
 .pz:first-child h2{font-size:30px}
@@ -196,6 +202,54 @@ table.res td.n{text-align:right;font-size:14px;white-space:nowrap}
 .citaat{margin:0;padding:16px 18px;border-left:5px solid var(--c);background:color-mix(in srgb,var(--c) 10%,var(--paper));border-radius:4px 12px 12px 4px;font-family:var(--display);font-weight:600;font-size:clamp(21px,5.4vw,26px);line-height:1.3}
 .citaat::before{content:"“"}.citaat::after{content:"”"}
 .pz:last-child:nth-child(even){grid-column:1/-1;min-height:150px}
+/* telefoon: grotere tikvlakken, compactere koppen, geen blijvende hover-kleuren */
+html{-webkit-tap-highlight-color:transparent}
+body{min-height:100dvh}
+.wrap{padding-bottom:max(80px,calc(env(safe-area-inset-bottom,0px) + 48px))}
+@media (hover:none){.keuze:hover,.ve:hover{border-color:var(--line);color:var(--ink)}.btn.ghost:hover{color:var(--ink)}.btn:hover{filter:none}.tl li.slot button:hover{border-style:dashed;border-color:var(--line);color:var(--muted)}.back:hover{color:var(--muted)}}
+@media (pointer:coarse){
+  .btn{min-height:48px}
+  .btn.sm{min-height:44px;padding:9px 14px;font-size:15px}
+  .keuze{min-height:52px}
+  .tl li.slot button{min-height:42px;font-size:14px}
+  .back{padding:10px 0;margin:-10px 0 4px}
+  .brand{min-height:44px}
+  .kaartvak svg{cursor:default}
+}
+@media (max-width:480px){
+  body{font-size:16px}
+  .wrap{padding-top:10px}
+  .top{margin-bottom:14px}
+  .hero{margin-bottom:18px}
+  .kop{padding:16px;margin-bottom:12px}
+  .kop h1{padding-right:72px;min-height:52px;display:flex;align-items:center}
+  .kop .icoon{right:10px;top:6px;bottom:auto}
+  .kop .icoon svg{width:64px;height:64px}
+  .date{font-size:13px;white-space:nowrap}
+  .stat .small{white-space:nowrap}
+  .kop p{font-size:14.5px;line-height:1.45}
+  .ballon{gap:10px;margin-bottom:12px}
+  .ballon .avatar{width:44px;height:44px;border-radius:12px}
+  .ballon .avatar svg{width:36px;height:36px}
+  .ballon p{font-size:15px;padding:9px 12px}
+  .panel{padding:16px 14px;gap:14px;border-radius:14px}
+  .gq{font-size:21px}
+  .big{font-size:30px}
+  .qin{gap:8px}
+  .qin .btn{flex:none;padding-left:18px;padding-right:18px}
+  .row{gap:8px}
+  .tegels li{min-height:68px;font-size:17px;padding:8px}
+  .tkaart b{font-size:18px}
+  .tl li.ev{padding:8px 10px;gap:10px}
+  .tl li.ev .j{font-size:19px;min-width:48px}
+  .marge{grid-template-columns:1fr 1fr}
+  .marge .tot{display:none}
+  .punten{gap:2px}
+  .punten b{width:14px;height:14px;font-size:8px}
+  table.res{font-size:14px}
+  .score .big{font-size:52px}
+  .msg{padding-left:54px}
+}
 /* testbalk */
 .testbalk{position:fixed;right:8px;bottom:8px;z-index:9;display:flex;gap:6px;align-items:center;background:var(--ink);color:var(--bg);border-radius:8px;padding:5px 8px;font-size:12px;font-weight:600;opacity:.85}
 .testbalk button{border:1.5px solid currentColor;background:transparent;color:inherit;border-radius:8px;padding:0 7px;font-size:12px}
@@ -263,6 +317,10 @@ const store = {
   wis() { try { Object.keys(localStorage).filter(k => k.startsWith(`${SITE}:v8:${ymd}:`)).forEach(k => localStorage.removeItem(k)); } catch {} }
 };
 const fmtT = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+const TIK = matchMedia("(pointer:coarse)").matches;
+/* Op een telefoon het toetsenbord niet ongevraagd openen: alleen focussen als iemand al aan het typen was (of net op een knop tikte) */
+const typt = () => !!document.activeElement?.closest?.("form");
+const focusZacht = (el, mag) => { if (el && (!TIK || mag)) el.focus({ preventScroll: true }); };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 let opruimen = [];
 function ruimOp() { opruimen.forEach(f => f()); opruimen = []; document.onkeydown = null; }
@@ -285,7 +343,7 @@ function shell(titel, uitleg) {
     <div class="ballon" id="gast"><span class="avatar">${dier}</span><p><b>${g.naam} ${g.soort}</b><span id="gastzin">${g.intro}</span></p></div>
     <div class="panel" id="P"></div>`;
   const P = $("#P");
-  new MutationObserver(() => { if (P.querySelector(".msg.good")) zeg(willek(g.goed)); else if (P.querySelector(".msg.bad")) zeg(willek(g.fout)); else if (P.querySelector(".msg.bijna")) zeg("Je bent warm! Maar het kan specifieker."); }).observe(P, { childList: true });
+  new MutationObserver(() => { if (P.querySelector(".msg.good:not(:empty)")) zeg(willek(g.goed)); else if (P.querySelector(".msg.bad:not(:empty)")) zeg(willek(g.fout)); else if (P.querySelector(".msg.bijna:not(:empty)")) zeg("Je bent warm! Maar het kan specifieker."); }).observe(P, { childList: true });
   return P;
 }
 function uitslag(P, kop, score, extra) {
@@ -312,15 +370,15 @@ function woordketting() {
   const bewaar = () => store.set("ketting", st);
   function teken(msg, goed) {
     if (st.i >= K.length) { st.done = true; st.score = st.pts.reduce((a, b) => a + b, 0); bewaar(); return klaar(); }
-    const [w, oms] = K[st.i], open = Math.min(w.length, 1 + st.hulp), waard = Math.max(1, 10 - st.hulp * 3 - (st.fout || 0) * 2);
+    const bezig = typt(), [w, oms] = K[st.i], open = Math.min(w.length, 1 + st.hulp), waard = Math.max(1, 10 - st.hulp * 3 - (st.fout || 0) * 2);
     P.innerHTML = `<div class="stat"><span class="small">Woord ${st.i + 1} van ${K.length}</span><span><span class="big">${st.pts.reduce((a, b) => a + b, 0)}</span><span class="small"> punten</span></span></div>
       <div class="keten">${K.slice(0, st.i).map(([x], j) => `<span class="${st.pts[j] ? "" : "mis"}">${x}</span>`).join("")}<span class="nu">${w[0]}…</span></div>
       <p class="gq">${esc(oms)} <span class="small">(${w.length} letters)</span></p>
       <div class="vakjes">${[...w].map((ch, j) => `<span class="${j < open ? "open" : ""}">${j < open ? ch : ""}</span>`).join("")}</div>
-      <form class="qin" id="wf"><input id="wi" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Jouw antwoord" aria-label="Jouw antwoord"><button class="btn">Raad</button></form>
+      <form class="qin" id="wf"><input id="wi" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Jouw antwoord" aria-label="Jouw antwoord"><button class="btn">Raad</button></form>
       <div class="msg ${goed ? "good" : "bad"}" id="wm">${msg || ""}</div>
       <div class="row"><button class="btn ghost sm" id="whulp" ${open >= w.length - 1 ? "disabled" : ""}>Letter erbij (−3)</button><button class="btn ghost sm" id="wop">Sla over (0 punten)</button><span class="small">Nu ${waard} punten waard</span></div>`;
-    $("#wi").focus({ preventScroll: true });
+    focusZacht($("#wi"), bezig);
     $("#wf").onsubmit = e => {
       e.preventDefault(); const g = norm($("#wi").value); if (!g) return;
       if (g === norm(w)) { st.pts.push(waard); st.i++; st.hulp = 0; st.fout = 0; bewaar(); return teken(`<b>Goed!</b> ${w[0].toUpperCase() + w.slice(1)} <span class="plus">+${st.pts[st.pts.length - 1]}</span>`, true); }
@@ -366,7 +424,7 @@ function raadspel({ id, titel, uitleg, rondes, punten, label, tegels, klaarKop, 
     teken(msg, goed);
   }
   function teken(msg, goed) {
-    const R = rondes[st.r], n = R.tips.length;
+    const bezig = typt(), R = rondes[st.r], n = R.tips.length;
     const CAT = CATS[R.soort] || [];
     P.innerHTML = `<div class="stat"><span class="small">${label} ${st.r + 1} van ${rondes.length}</span><span><span class="big">${totaal()}</span><span class="small"> / 100</span></span></div>
       ${R.soort ? `<div class="catrij">${rondes.map((x, j) => `<span class="${j < st.r ? (st.pts[j] ? "af goed" : "af") : j === st.r ? "nu" : ""}" style="--k:${(CATS[x.soort] || [])[2]}">${esc(x.soort)}</span>`).join("")}</div>
@@ -375,9 +433,9 @@ function raadspel({ id, titel, uitleg, rondes, punten, label, tegels, klaarKop, 
       ${msg ? `<div class="msg ${goed ? "good" : "bad"}">${msg}</div>` : ""}
       <ol class="${tegels ? "tegels" : "tips"}">${R.tips.map((t, j) => `<li class="${j < st.tip ? "open" : ""}">${j < st.tip ? esc(t) : `<span class="small">${tegels ? "?" : `Tip ${j + 1}`}</span>`}</li>`).join("")}</ol>
       ${st.fout.length ? `<p class="small" style="margin:0">Al geprobeerd: ${st.fout.map(esc).join(", ")}</p>` : ""}
-      <form class="qin" id="rf"><input id="ri" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="${tegels ? "Wat is het verband?" : CAT[1] || vraag || "Wie ben ik?"}" aria-label="Jouw antwoord"><button class="btn">Raad</button></form>
+      <form class="qin" id="rf"><input id="ri" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="${tegels ? "Wat is het verband?" : CAT[1] || vraag || "Wie ben ik?"}" aria-label="Jouw antwoord"><button class="btn">Raad</button></form>
       <div class="row"><button class="btn ghost sm" id="rtip" ${st.tip >= n ? "disabled" : ""}>${tegels ? "Toon er nog een" : "Nog een tip"}</button><button class="btn ghost sm" id="rop">Geef op</button><span class="small">Nu ${punten[st.tip - 1]} punten waard</span></div>`;
-    $("#ri").focus({ preventScroll: true });
+    focusZacht($("#ri"), bezig);
     $("#rf").onsubmit = e => {
       e.preventDefault(); const ruw = $("#ri").value.trim(), g = norm(ruw); if (!g) return;
       if (telt(g)) { st.pts.push(punten[st.tip - 1]); return volgende(`<b>Goed!</b> Het was ${esc(R.uitleg || R.ok[0])}. <span class="plus">+${punten[st.tip - 1]}</span>`, true); }
@@ -453,7 +511,7 @@ function verband() {
     teken(msg, goed);
   }
   function teken(msg, soort) {
-    const R = RONDES[st.r];
+    const bezig = typt(), R = RONDES[st.r];
     const opties = schud([R.kort, ...R.nep], rng(dayNo * 31 + st.r));
     P.innerHTML = `<div class="stat"><span class="small">Ronde ${st.r + 1} van ${RONDES.length}</span><span><span class="big">${totaal()}</span><span class="small"> / 100</span></span></div>
       ${msg ? `<div class="msg ${soort === true ? "good" : soort === "bijna" ? "bijna" : "bad"}">${msg}</div>` : ""}
@@ -461,7 +519,7 @@ function verband() {
       ${st.hint ? `<p class="hintregel">Hint: ${esc(R.hint)}</p>` : ""}
       ${st.fout.length ? `<p class="small" style="margin:0">Niet goed: ${st.fout.map(esc).join(", ")}</p>` : ""}
       ${st.mk ? `<div class="keuzes"><p class="small" style="margin:0">Kies het verband (nog ${waard()} punten):</p>${opties.map(o => `<button class="keuze" data-o="${esc(o)}">${esc(o)}</button>`).join("")}</div>`
-      : `<form class="qin" id="rf"><input id="ri" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Wat is het verband?" aria-label="Het verband"><button class="btn">Raad</button></form>
+      : `<form class="qin" id="rf"><input id="ri" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Wat is het verband?" aria-label="Het verband"><button class="btn">Raad</button></form>
       <div class="row"><button class="btn ghost sm" id="rhint" ${st.hint ? "disabled" : ""}>Hint (−4)</button><button class="btn ghost sm" id="rmk">Toon opties</button><button class="btn ghost sm" id="rop">Geef op</button><span class="small">Nu ${waard()} punten waard</span></div>`}`;
     if (st.mk) {
       P.querySelectorAll(".keuze").forEach(b => b.onclick = () => {
@@ -470,7 +528,7 @@ function verband() {
       });
       return;
     }
-    $("#ri").focus({ preventScroll: true });
+    focusZacht($("#ri"), bezig);
     $("#rf").onsubmit = e => {
       e.preventDefault(); const ruw = $("#ri").value.trim(), g = norm(ruw); if (!g) return;
       if (R.ok.some(k => g.includes(norm(k)))) { const p = waard(); st.pts.push(p); return volgende(`<b>Goed!</b> ${esc(R.uitleg[0].toUpperCase() + R.uitleg.slice(1))}. <span class="plus">+${p}</span>`, true); }
@@ -522,7 +580,7 @@ function opdekaart() {
         ${st.gok ? speld(st.gok, u) : ""}</svg></div>
       <div class="row">${st.klaar ? `<button class="btn" id="kv">${st.r + 1 >= RONDES.length ? "Bekijk je score" : "Volgende plek"}</button>` : `<button class="btn" id="kok" ${st.gok ? "" : "disabled"}>Hier ligt het</button><span class="small">${st.gok ? "Tik opnieuw om je speld te verzetten." : "Tik op de kaart om je speld te zetten."}</span>`}</div>`;
     const svg = $("#kaart");
-    if (!st.klaar) svg.onclick = e => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const q = p.matrixTransform(svg.getScreenCTM().inverse()); st.gok = [Math.round(q.x * 10) / 10, Math.round(q.y * 10) / 10]; bewaar(); teken(); };
+    if (!st.klaar) svg.onclick = e => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const q = p.matrixTransform(svg.getScreenCTM().inverse()); st.gok = [Math.round(q.x * 10) / 10, Math.round(q.y * 10) / 10]; bewaar(); teken(); if (TIK) $("#kok")?.scrollIntoView({ block: "nearest", behavior: "smooth" }); };
     $("#kok") && ($("#kok").onclick = () => {
       const km = kmTussen(naarLL(R.k, st.gok), R.ll), p = punten(R.k, km), kmTxt = km < 10 ? km.toFixed(1).replace(".", ",") : Math.round(km).toLocaleString("nl-NL");
       st.pts.push(p); st.km.push(Math.round(km)); st.klaar = true; bewaar();
@@ -611,17 +669,18 @@ function gokhok() {
   if (st.done) return klaar();
   const bewaar = () => store.set("gokhok", st);
   const parse = v => parseFloat(String(v).trim().replace(/\s/g, "").replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", "."));
-  function vraag() {
+  function vraag(e) {
     if (st.a.length >= VR.length) { st.done = true; st.score = st.a.reduce((s, x) => s + x.p, 0); bewaar(); return klaar(); }
     const i = st.a.length, [q, , unit, , kind] = VR[i], jaar = kind === "jaar";
     P.innerHTML = `<div class="stat"><span class="small">Vraag ${i + 1} van 10</span><div class="punten">${VR.map((_, j) => `<b class="${j < i ? "p" + st.a[j].p : ""}">${j < i ? st.a[j].p : ""}</b>`).join("")}</div></div>
       <p class="gq">${esc(q)}</p>
-      <form class="marge" id="gf"><label><span class="small">Minstens</span><input id="glo" inputmode="decimal" autocomplete="off"></label><span class="tot">tot</span><label><span class="small">Hoogstens</span><input id="ghi" inputmode="decimal" autocomplete="off"></label></form>
+      <form class="marge" id="gf"><label><span class="small">Minstens</span><input id="glo" inputmode="decimal" autocomplete="off" enterkeyhint="next"></label><span class="tot">tot</span><label><span class="small">Hoogstens</span><input id="ghi" inputmode="decimal" autocomplete="off" enterkeyhint="done"></label></form>
       <div class="row"><button class="btn" form="gf">Vastleggen</button><button class="btn ghost" type="button" id="gtip"${st.tip === i ? " hidden" : ""}>Koop een tip (−4)</button><span class="small">${jaar ? "Een jaartal" : esc(unit)}</span></div>
       <div class="msg" id="gt"${st.tip === i ? "" : " hidden"}><b>Tip:</b> ${esc(grootteTip(VR[i][1], jaar))}</div>
       <div class="msg bad" id="gm"></div>
       <div class="tabel">${jaar ? "<span>marge ≤5 jaar: 10</span><span>≤15: 7</span><span>≤30: 5</span><span>≤60: 3</span><span>breder: 1</span>" : "<span>marge ≤10%: 10</span><span>≤25%: 7</span><span>≤50%: 5</span><span>≤100%: 3</span><span>breder: 1</span>"}<span>ernaast: 0</span></div>`;
-    $("#glo").focus({ preventScroll: true });
+    focusZacht($("#glo"), !!e);
+    $("#glo").onkeydown = e => { if (e.key === "Enter" && !$("#ghi").value.trim()) { e.preventDefault(); $("#ghi").focus(); } };
     $("#gtip").onclick = () => { st.tip = i; bewaar(); $("#gt").hidden = false; $("#gtip").hidden = true; };
     $("#gf").onsubmit = e => {
       e.preventDefault();
